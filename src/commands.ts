@@ -90,31 +90,26 @@ export function cmdInstall(): void {
   }
 }
 
-/** `stewardmcp uninstall` — remove this repo's steward from Claude Code and delete .stewardmcp/. */
+/** `stewardmcp uninstall` — remove this repo's steward MCP registration from Claude Code. */
 export function cmdUninstall(): void {
   const cwd = process.cwd();
   const stewardDir = path.join(cwd, STEWARD_DIR);
   const configPath = path.join(stewardDir, "config.json");
 
-  // Try to remove MCP registration if config exists
-  if (fs.existsSync(configPath)) {
-    const config = JSON.parse(fs.readFileSync(configPath, "utf-8")) as { name: string };
-    try {
-      execSync(`claude mcp remove "${config.name}"`, { stdio: "inherit" });
-      console.log(`Removed MCP server: ${config.name}`);
-    } catch {
-      console.log(`MCP server "${config.name}" was not registered (skipped).`);
-    }
-  }
-
-  // Remove the .stewardmcp/ directory
-  if (fs.existsSync(stewardDir)) {
-    fs.rmSync(stewardDir, { recursive: true });
-    console.log(`Removed ${STEWARD_DIR}/`);
-  } else {
-    console.error(`No ${STEWARD_DIR}/ directory found in ${cwd}. Nothing to uninstall.`);
+  if (!fs.existsSync(configPath)) {
+    console.error(`No ${STEWARD_DIR}/config.json found in ${cwd}. Nothing to uninstall.`);
     process.exit(1);
   }
+
+  const config = JSON.parse(fs.readFileSync(configPath, "utf-8")) as { name: string };
+  try {
+    execSync(`claude mcp remove "${config.name}"`, { stdio: "inherit" });
+    console.log(`Removed MCP server: ${config.name}`);
+  } catch {
+    console.log(`MCP server "${config.name}" was not registered (skipped).`);
+  }
+
+  console.log(`${STEWARD_DIR}/ was kept. Delete it manually if no longer needed.`);
 }
 
 /** `stewardmcp list` — show all steward MCP instances registered in Claude Code. */
