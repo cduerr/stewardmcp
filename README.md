@@ -121,7 +121,6 @@ The steward's Claude Code session also reads the target repo's `CLAUDE.md` autom
 - **Multi-turn** — the session persists across questions. The steward remembers prior context within a session.
 - **Idle timeout** — if no requests arrive within `idle_timeout_minutes`, the next request triggers a full restart (new session, re-warmup). Each request resets the timer. This picks up changes to CLAUDE.md, ENGINEER.md, and the codebase.
 - **Manual clear** — call the `clear` tool to force an immediate session reset.
-- **Read-only** — the steward is restricted to read-only tools via `allowed_tools`. This is a software-level restriction, not OS-level enforcement.
 
 ## Project structure
 
