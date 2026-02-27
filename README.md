@@ -42,6 +42,18 @@ npx stewardmcp@latest list        # Show all registered steward instances
 npx stewardmcp@latest uninstall   # Remove this repo's steward from Claude Code
 ```
 
+## Usage
+
+Once installed, the steward tools are available to any MCP-compatible client. Claude won't call them automatically — you need to tell it the steward exists.
+
+**Claude Code** — add something like this to your CLAUDE.md:
+
+> Use the `stewardmcp-billing-api` MCP server to ask questions (`ask` tool) about the billing-api codebase. Prefer follow-up questions over restating context.
+
+**Other MCP clients** — include similar instructions in your system prompt or conversation.
+
+Replace `stewardmcp-billing-api` with your instance name (shown during `init`).
+
 ## Tools
 
 ### ask
