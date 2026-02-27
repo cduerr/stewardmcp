@@ -3,15 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { SessionManager } from "./session.js";
 import { createMcpServer } from "./server.js";
-import { STEWARD_DIR, loadConfig } from "./types.js";
-
-function loadEngineerMd(repoPath: string): string {
-  const mdPath = path.join(repoPath, STEWARD_DIR, "ENGINEER.md");
-  if (!fs.existsSync(mdPath)) {
-    return "";
-  }
-  return fs.readFileSync(mdPath, "utf-8");
-}
+import { loadConfig } from "./types.js";
 
 /**
  * `stewardmcp serve <path>` — load config from the target repo's .stewardmcp/
@@ -27,8 +19,7 @@ export async function cmdServe(repoPath: string): Promise<void> {
   }
 
   const config = loadConfig(resolved);
-  const engineerMd = loadEngineerMd(resolved);
-  const session = new SessionManager(resolved, config, engineerMd);
+  const session = new SessionManager(resolved, config);
   const server = createMcpServer(session, config);
 
   const transport = new StdioServerTransport();

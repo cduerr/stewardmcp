@@ -1,4 +1,7 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { query } from "@anthropic-ai/claude-code";
+import { STEWARD_DIR, loadConfig } from "./types.js";
 import type { StewardConfig } from "./types.js";
 
 /**
@@ -22,11 +25,24 @@ export class SessionManager {
   private warmedUp = false;
   private queue: Promise<void> = Promise.resolve();
 
-  constructor(
-    private repoPath: string,
-    private config: StewardConfig,
-    private engineerMd: string,
-  ) {}
+  private config: StewardConfig;
+  private engineerMd: string;
+
+  constructor(private repoPath: string, initialConfig: StewardConfig) {
+    this.config = initialConfig;
+    this.engineerMd = this.loadEngineerMd();
+  }
+
+  private reloadFromDisk(): void {
+    this.config = loadConfig(this.repoPath);
+    this.engineerMd = this.loadEngineerMd();
+  }
+
+  private loadEngineerMd(): string {
+    const mdPath = path.join(this.repoPath, STEWARD_DIR, "ENGINEER.md");
+    if (!fs.existsSync(mdPath)) return "";
+    return fs.readFileSync(mdPath, "utf-8");
+  }
 
   get state(): "idle" | "busy" | "uninitialized" {
     if (!this.warmedUp) return "uninitialized";
@@ -72,6 +88,7 @@ export class SessionManager {
     question: string,
     caller: string,
   ): Promise<string> {
+    this.reloadFromDisk();
     this.checkIdleTimeout();
     this.busy = true;
 
