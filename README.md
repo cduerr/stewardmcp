@@ -2,6 +2,18 @@
 
 An MCP server that runs a Claude Code session against a target repo and exposes it as a tool. Other Claude Code instances call `ask` to get answers about the codebase without dumping files into their own context.
 
+## Quick Start
+
+```sh
+cd /path/to/target-repo
+npx stewardmcp@latest init
+npx stewardmcp@latest install
+```
+
+Then tell Claude about it in your CLAUDE.md:
+
+> Use the `stewardmcp-<repo-name>` MCP server to ask questions about the \<repo-name\> codebase. Prefer follow-up questions over restating context.
+
 ## How it works
 
 Steward spawns a Claude Code Agent SDK session pointed at a repo. On the first question, it warms up by reading the directory structure and CLAUDE.md. Subsequent questions reuse the same session, so the steward builds up context over time. If the session sits idle for longer than the configured timeout (default 60 minutes), it resets automatically on the next request.
