@@ -91,7 +91,8 @@ Returns the current session state. No parameters.
   "currentCaller": "fe",
   "turnCount": 3,
   "idleSeconds": 45,
-  "idleTimeoutMinutes": 60
+  "idleTimeoutMinutes": 60,
+  "contextPercent": 32
 }
 ```
 
@@ -109,6 +110,8 @@ Edit `.stewardmcp/config.json` in the target repo:
 | `idle_timeout_minutes` | `60` | Minutes of inactivity before the session resets |
 | `allowed_tools` | `["Read", "Grep", "Glob", "LS"]` | Tools the steward's session can use |
 | `warmup_prompt` | *(see defaults)* | Prompt sent on session start to familiarize with the codebase |
+| `max_context_characters` | `200000` | Character budget for session context |
+| `context_warning_threshold` | `0.6` | Context fraction at which to suggest resetting |
 
 The steward's Claude Code session also reads the target repo's `CLAUDE.md` automatically (standard Claude Code behavior). `.stewardmcp/ENGINEER.md` layers on steward-specific behavior via `appendSystemPrompt`.
 

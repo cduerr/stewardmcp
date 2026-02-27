@@ -17,6 +17,7 @@ export class SessionManager {
   private lastActiveAt: Date | null = null;
   private currentCaller: string | null = null;
   private turnCount = 0;
+  private contextCharacters = 0;
   private busy = false;
   private warmedUp = false;
   private queue: Promise<void> = Promise.resolve();
@@ -38,6 +39,10 @@ export class SessionManager {
 
   get turns(): number {
     return this.turnCount;
+  }
+
+  get contextPercent(): number {
+    return this.contextCharacters / this.config.max_context_characters;
   }
 
   /** Seconds since last activity, or null if no session exists. */
@@ -140,7 +145,9 @@ export class SessionManager {
       }
     }
 
-    return resultText || "(no response)";
+    const result = resultText || "(no response)";
+    this.contextCharacters += prompt.length + result.length;
+    return result;
   }
 
   /** If the session has been idle longer than the configured timeout, tear it down. */
@@ -159,6 +166,7 @@ export class SessionManager {
     this.lastActiveAt = null;
     this.currentCaller = null;
     this.turnCount = 0;
+    this.contextCharacters = 0;
     this.warmedUp = false;
     this.queue = Promise.resolve();
   }

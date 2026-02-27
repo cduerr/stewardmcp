@@ -22,7 +22,14 @@ export function createMcpServer(
     async ({ question, caller }) => {
       try {
         const answer = await session.ask(question, caller);
-        return { content: [{ type: "text" as const, text: answer }] };
+        const pct = Math.round(session.contextPercent * 100);
+        const contextLine =
+          session.contextPercent >= config.context_warning_threshold
+            ? `\n\n(context: ${pct}% — consider calling clear to reset the session)`
+            : `\n\n(context: ${pct}%)`;
+        return {
+          content: [{ type: "text" as const, text: answer + contextLine }],
+        };
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         return {
@@ -45,6 +52,7 @@ export function createMcpServer(
         turnCount: session.turns,
         idleSeconds: session.idleSeconds,
         idleTimeoutMinutes: config.idle_timeout_minutes,
+        contextPercent: Math.round(session.contextPercent * 100),
       };
       return {
         content: [

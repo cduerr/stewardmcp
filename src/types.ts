@@ -6,6 +6,8 @@ export interface StewardConfig {
   idle_timeout_minutes: number;
   allowed_tools: string[];
   warmup_prompt: string;
+  max_context_characters: number;
+  context_warning_threshold: number;
 }
 
 export const STEWARD_DIR = ".stewardmcp";
