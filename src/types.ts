@@ -15,7 +15,7 @@ export function loadConfig(repoPath: string): StewardConfig {
   const configPath = path.join(repoPath, STEWARD_DIR, "config.json");
   if (!fs.existsSync(configPath)) {
     console.error(
-      `No ${STEWARD_DIR}/config.json found in ${repoPath}. Run 'stewardmcp init' in the target repo first.`,
+      `No ${STEWARD_DIR}/config.json found in ${repoPath}. Run 'npx stewardmcp@latest init' in the target repo first.`,
     );
     process.exit(1);
   }

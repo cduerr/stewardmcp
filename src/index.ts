@@ -26,7 +26,7 @@ async function main(): Promise<void> {
     case "serve": {
       const repoArg = args[1];
       if (!repoArg) {
-        console.error("Usage: stewardmcp serve <repoPath>");
+        console.error("Usage: npx stewardmcp@latest serve <repoPath>");
         process.exit(1);
       }
       await cmdServe(repoArg);

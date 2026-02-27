@@ -56,7 +56,7 @@ export function cmdInit(): void {
   console.log("");
   console.log("Next steps:");
   console.log(`  1. Edit ${STEWARD_DIR}/config.json and ${STEWARD_DIR}/ENGINEER.md as needed`);
-  console.log("  2. Run 'stewardmcp install' to register with Claude Code");
+  console.log("  2. Run 'npx stewardmcp@latest install' to register with Claude Code");
 }
 
 /** `stewardmcp install` — register this repo's steward as an MCP server in Claude Code. */
@@ -70,7 +70,7 @@ export function cmdInstall(): void {
     const existing = execSync("claude mcp list", { encoding: "utf-8" });
     if (existing.includes(name)) {
       console.error(
-        `MCP server "${name}" is already registered. Run 'stewardmcp uninstall' first to re-register.`,
+        `MCP server "${name}" is already registered. Run 'npx stewardmcp@latest uninstall' first to re-register.`,
       );
       process.exit(1);
     }
@@ -80,7 +80,7 @@ export function cmdInstall(): void {
 
   try {
     execSync(
-      `claude mcp add --scope user "${name}" -- npx github:cduerr/stewardmcp serve "${cwd}"`,
+      `claude mcp add --scope user "${name}" -- npx stewardmcp@latest serve "${cwd}"`,
       { stdio: "inherit" },
     );
     console.log(`Registered MCP server: ${name}`);
@@ -90,17 +90,29 @@ export function cmdInstall(): void {
   }
 }
 
-/** `stewardmcp uninstall` — remove this repo's steward from Claude Code. */
+/** `stewardmcp uninstall` — remove this repo's steward from Claude Code and delete .stewardmcp/. */
 export function cmdUninstall(): void {
   const cwd = process.cwd();
-  const config = loadConfig(cwd);
-  const name = config.name;
+  const stewardDir = path.join(cwd, STEWARD_DIR);
+  const configPath = path.join(stewardDir, "config.json");
 
-  try {
-    execSync(`claude mcp remove "${name}"`, { stdio: "inherit" });
-    console.log(`Removed MCP server: ${name}`);
-  } catch {
-    console.error(`Failed to remove MCP server "${name}". Is it registered?`);
+  // Try to remove MCP registration if config exists
+  if (fs.existsSync(configPath)) {
+    const config = JSON.parse(fs.readFileSync(configPath, "utf-8")) as { name: string };
+    try {
+      execSync(`claude mcp remove "${config.name}"`, { stdio: "inherit" });
+      console.log(`Removed MCP server: ${config.name}`);
+    } catch {
+      console.log(`MCP server "${config.name}" was not registered (skipped).`);
+    }
+  }
+
+  // Remove the .stewardmcp/ directory
+  if (fs.existsSync(stewardDir)) {
+    fs.rmSync(stewardDir, { recursive: true });
+    console.log(`Removed ${STEWARD_DIR}/`);
+  } else {
+    console.error(`No ${STEWARD_DIR}/ directory found in ${cwd}. Nothing to uninstall.`);
     process.exit(1);
   }
 }
@@ -125,7 +137,7 @@ export function cmdList(): void {
 
 /** `stewardmcp help` — print usage info for all user-facing commands. */
 export function cmdHelp(): void {
-  console.log("Usage: stewardmcp <command>");
+  console.log("Usage: npx stewardmcp@latest <command>");
   console.log("");
   console.log("Commands:");
   console.log("  init        Scaffold .stewardmcp/ in the current directory");

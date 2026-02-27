@@ -18,7 +18,7 @@ Communication happens over stdio using the MCP protocol. Claude Code spawns the 
 
 ```sh
 cd /path/to/target-repo
-npx github:cduerr/stewardmcp init
+npx stewardmcp@latest init
 ```
 
 This creates a `.stewardmcp/` directory with:
@@ -30,7 +30,7 @@ The instance name is derived from the directory name (e.g. `stewardmcp-billing-a
 ### 2. Register with Claude Code
 
 ```sh
-npx github:cduerr/stewardmcp install
+npx stewardmcp@latest install
 ```
 
 This registers the steward as an MCP server in Claude Code at user scope, so it's available across all your projects.
@@ -38,8 +38,8 @@ This registers the steward as an MCP server in Claude Code at user scope, so it'
 ### 3. Manage instances
 
 ```sh
-npx github:cduerr/stewardmcp list        # Show all registered steward instances
-npx github:cduerr/stewardmcp uninstall   # Remove this repo's steward from Claude Code
+npx stewardmcp@latest list        # Show all registered steward instances
+npx stewardmcp@latest uninstall   # Remove this repo's steward from Claude Code
 ```
 
 ## Tools
