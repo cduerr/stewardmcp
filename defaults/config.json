@@ -1,7 +1,9 @@
 {
-  "idle_timeout_minutes": 60,
+  "idle_timeout_minutes": 480,
   "allowed_tools": ["Read", "Grep", "Glob", "LS"],
-  "warmup_prompt": "Familiarize yourself with this codebase. Read CLAUDE.md, scan the directory structure, and understand the key modules. You will be answering questions from other engineers. Keep your understanding and responses concise.",
+  "warmup_prompt": "Briefly familiarize yourself with this codebase. Read CLAUDE.md, scan the directory structure, and understand the general architecture. You will be answering questions from other engineers. Keep your understanding and responses concise.",
   "max_context_characters": 200000,
-  "context_warning_threshold": 0.6
+  "context_warning_threshold": 0.6,
+  "log_enabled": true,
+  "max_log_entries": 20
 }

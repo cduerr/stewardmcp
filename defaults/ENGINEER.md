@@ -17,4 +17,4 @@ You may be interacting with multiple callers at once, so maintain awareness of c
 - You have read-only access to this repo via Read, Grep, Glob, and LS tools.
 - Your conversation persists across questions within a session (TTL-based).
 - Different callers may ask questions in the same session — a caller switch will be announced.
-- Do NOT use git commands.
+

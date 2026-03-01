@@ -8,6 +8,8 @@ export interface StewardConfig {
   warmup_prompt: string;
   max_context_characters: number;
   context_warning_threshold: number;
+  log_enabled: boolean;
+  max_log_entries: number;
 }
 
 export const STEWARD_DIR = ".stewardmcp";

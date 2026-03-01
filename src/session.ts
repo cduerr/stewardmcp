@@ -107,6 +107,11 @@ export class SessionManager {
       const result = await this.runQuery(prompt);
       this.turnCount++;
       this.lastActiveAt = new Date();
+
+      if (this.config.log_enabled) {
+        this.appendLog(question, caller, result);
+      }
+
       return result;
     } finally {
       this.busy = false;
@@ -175,6 +180,29 @@ export class SessionManager {
     if (idleMinutes >= this.config.idle_timeout_minutes) {
       this.destroy();
     }
+  }
+
+  private appendLog(question: string, caller: string, answer: string): void {
+    const logPath = path.join(this.repoPath, STEWARD_DIR, "log.json");
+    let entries: unknown[] = [];
+    try {
+      entries = JSON.parse(fs.readFileSync(logPath, "utf-8"));
+      if (!Array.isArray(entries)) entries = [];
+    } catch {
+      entries = [];
+    }
+
+    const timestamp = new Date().toISOString();
+    entries.push(
+      { role: "user", content: question, name: caller, timestamp },
+      { role: "assistant", content: answer, timestamp },
+    );
+
+    if (entries.length > this.config.max_log_entries) {
+      entries = entries.slice(entries.length - this.config.max_log_entries);
+    }
+
+    fs.writeFileSync(logPath, JSON.stringify(entries, null, 2) + "\n");
   }
 
   /** Reset all session state. The next request will trigger a fresh warmup. */
